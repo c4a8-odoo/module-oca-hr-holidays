@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_calendar_public_holiday_form" model="ir.ui.view">
+        <field name="name">calendar.public.holiday.form.employees</field>
+        <field name="model">calendar.public.holiday</field>
+        <field
+            name="inherit_id"
+            ref="calendar_public_holiday.view_calendar_public_holiday_form"
+        />
+        <!-- After calendar_public_holiday_resource, which adds the button box. -->
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button
+                    name="action_view_employees"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-users"
+                    help="Employees these public holidays give a day off."
+                >
+                    <field name="employee_count" widget="statinfo" string="Employees" />
+                </button>
+            </div>
+            <xpath
+                expr="//field[@name='line_ids']/list/field[@name='state_ids']"
+                position="after"
+            >
+                <field
+                    name="location_ids"
+                    widget="many2many_tags"
+                    placeholder="All Locations"
+                    optional="show"
+                />
+            </xpath>
+            <field name="state_ids" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_calendar_public_holiday_line_form" model="ir.ui.view">
+        <field name="name">calendar.public.holiday.line.form.work.location</field>
+        <field name="model">calendar.public.holiday.line</field>
+        <field
+            name="inherit_id"
+            ref="calendar_public_holiday_resource.view_calendar_public_holiday_line_form"
+        />
+        <field name="arch" type="xml">
+            <field name="state_ids" position="after">
+                <field
+                    name="location_ids"
+                    widget="many2many_tags"
+                    placeholder="All Locations"
+                />
+            </field>
+        </field>
+    </record>
+</odoo>
