@@ -22,7 +22,8 @@ are logged. If empty, the internal project of the employee's company is used."""
         readonly=False,
         domain="[('project_id', '=', timesheet_project_id)]",
         help="""Task on which the timesheets generated for this time off type are
-logged. If empty, the time off task of the employee's company is used.""",
+logged. If empty, the generated timesheets are linked to the project only,
+without any task.""",
     )
 
     @api.depends("timesheet_project_id")

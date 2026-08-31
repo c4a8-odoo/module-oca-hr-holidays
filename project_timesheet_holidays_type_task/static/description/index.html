@@ -398,17 +398,21 @@ without their own project keep using the company default.</p>
 </div>
 <div class="section" id="configuration">
 <h2><a class="toc-backref" href="#toc-entry-1">Configuration</a></h2>
+<p><strong>Prerequisite:</strong> the company-wide internal project and time off task
+(Settings → Time Off) must be configured. Odoo skips timesheet
+generation entirely when they are missing, so a time off type would keep
+its own project without any effect. They are created automatically and
+remain the fallback for types without their own project.</p>
 <ol class="arabic simple">
 <li>Go to <em>Time Off → Configuration → Time Off Types</em> and open a time off
 type.</li>
-<li>In the <em>Configuration</em> section, set the <em>Timesheet Project</em> and
+<li>In the <em>Timesheets</em> section, set the <em>Timesheet Project</em> and
 optionally the <em>Timesheet Task</em>.</li>
-<li>The company-wide internal project and time off task (Settings → Time
-Off) must still be configured (they are created automatically) — they
-remain the fallback for types without their own project.</li>
+<li>Leave <em>Timesheet Project</em> empty to keep the company-wide default for
+that type.</li>
 </ol>
-<p>Note: the fields are hidden for types counted as <em>Worked Time</em>, since no
-timesheets are generated for those.</p>
+<p>Note: the <em>Timesheets</em> section is hidden for types counted as <em>Worked
+Time</em>, since no timesheets are generated for those.</p>
 </div>
 <div class="section" id="bug-tracker">
 <h2><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h2>
