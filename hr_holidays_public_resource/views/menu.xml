@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- The public holiday calendars are the template the generated time off
+         is built from, so they are reachable straight from the Time Off
+         configuration. Creating next year's copy and synchronising are offered
+         on that list itself rather than as menus of their own. -->
+    <menuitem
+        id="menu_hr_holidays_public_view"
+        name="Public Holiday Templates"
+        parent="hr_holidays.menu_hr_holidays_configuration"
+        action="calendar_public_holiday.open_calendar_public_holiday_view"
+        sequence="70"
+    />
+</odoo>

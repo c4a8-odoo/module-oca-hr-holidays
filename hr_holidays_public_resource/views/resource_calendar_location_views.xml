@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="resource_calendar_location_view_list" model="ir.ui.view">
+        <field name="name">resource.calendar.location.list</field>
+        <field name="model">resource.calendar.location</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="company_id" groups="base.group_multi_company" />
+            </list>
+        </field>
+    </record>
+
+    <record id="resource_calendar_location_view_form" model="ir.ui.view">
+        <field name="name">resource.calendar.location.form</field>
+        <field name="model">resource.calendar.location</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="text-bg-danger"
+                        invisible="active"
+                    />
+                    <group>
+                        <group>
+                            <field name="active" invisible="1" />
+                            <field name="name" />
+                        </group>
+                        <group>
+                            <field
+                                name="company_id"
+                                groups="base.group_multi_company"
+                            />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="public_holidays" string="Public Holidays">
+                            <field name="public_holiday_overview_line_ids">
+                                <list>
+                                    <field name="date" />
+                                    <field name="name" />
+                                    <field name="public_holiday_id" />
+                                    <field
+                                        name="location_ids"
+                                        widget="many2many_tags"
+                                        optional="show"
+                                    />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="resource_calendar_location_view_search" model="ir.ui.view">
+        <field name="name">resource.calendar.location.search</field>
+        <field name="model">resource.calendar.location</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <filter
+                    string="Archived"
+                    name="inactive"
+                    domain="[('active', '=', False)]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record id="resource_calendar_location_action" model="ir.actions.act_window">
+        <field name="name">Public Holiday Locations</field>
+        <field name="res_model">resource.calendar.location</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a public holiday location
+            </p>
+            <p>
+                Employees are assigned a location, and a public holiday
+                can be granted to the people of specific locations.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_resource_calendar_location"
+        name="Public Holiday Locations"
+        parent="hr_holidays.menu_hr_holidays_configuration"
+        action="resource_calendar_location_action"
+        sequence="71"
+    />
+</odoo>
