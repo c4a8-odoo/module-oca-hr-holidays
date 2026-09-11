@@ -1,7 +1,8 @@
 Go to *Time Off -\> Configuration -\> Time Off Types* and open a Leave
 Type
 
-- Check "Exclude Public Holidays" to exclude public holidays.
+- Leave the standard "Ignore Public Holidays" unchecked to exclude public
+  holidays from the leave duration; check it to count them.
 
 Go to *Employees -\> Configuration -\> Work Locations* and open a work
 location

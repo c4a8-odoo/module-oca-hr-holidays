@@ -120,12 +120,12 @@ class TestHolidaysComputeDaysBase(TestCalendarPublicHoliday):
         )
 
         cls.holiday_type = cls.HrLeaveType.create(
-            {"name": "Leave Type Test", "exclude_public_holidays": True}
+            {"name": "Leave Type Test", "include_public_holidays_in_duration": False}
         )
         cls.holiday_type_no_excludes = cls.HrLeaveType.create(
             {
                 "name": "Leave Type Test Without excludes",
-                "exclude_public_holidays": False,
+                "include_public_holidays_in_duration": True,
             }
         )
 

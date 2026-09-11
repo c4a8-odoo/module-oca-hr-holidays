@@ -57,7 +57,8 @@ Configuration
 Go to *Time Off -> Configuration -> Time Off Types* and open a Leave
 Type
 
--  Check "Exclude Public Holidays" to exclude public holidays.
+-  Leave the standard "Ignore Public Holidays" unchecked to exclude
+   public holidays from the leave duration; check it to count them.
 
 Go to *Employees -> Configuration -> Work Locations* and open a work
 location
@@ -87,8 +88,8 @@ For using public holidays on leaves:
 1. Go to *Time Off > Dashboard*.
 2. Select dragging on the calendar the days you want to be on leave, or
    go to the form view for selecting start and end dates.
-3. Select the proper "Leave Type" that has "Exclude Public Holidays"
-   checked.
+3. Select the proper "Leave Type" that does not have "Ignore Public
+   Holidays" checked.
 4. If no leave type is yet specified, then default configuration is to
    exclude public holidays.
 5. The number of days will be computed excluding public holidays that
@@ -132,6 +133,9 @@ Changelog
 19.0.2.0.0
 ----------
 
+-  The *Exclude Public Holidays* flag of the leave type is replaced by
+   the standard *Ignore Public Holidays* setting, which means the
+   opposite. Upgrading carries the value over.
 -  Public holidays follow the public holiday region of the employee,
    derived from their work location, instead of the state of their work
    address. Upgrading links every work location to the region created

@@ -3,7 +3,6 @@
 from . import calendar_public_holiday_region
 from . import hr_employee
 from . import hr_leave
-from . import hr_leave_type
 from . import hr_version
 from . import hr_work_location
 from . import resource_calendar

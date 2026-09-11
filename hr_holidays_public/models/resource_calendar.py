@@ -30,20 +30,19 @@ class ResourceCalendar(models.Model):
         employee_id = self.env.context.get("employee_id", False)
         if not employee_id:
             return intervals
-        # The public work address gives the country; the region is read with
-        # elevated rights, as the employee record itself may not be readable
-        # to the user requesting the leave.
-        employee = self.env["hr.employee.public"].browse(employee_id)
-        region = (
-            self.env["hr.employee"].sudo().browse(employee_id).public_holiday_region_id
-        )
+        # Read with elevated rights: the employee record may not be readable
+        # to the user requesting the leave. The public employee model is not
+        # used on purpose -- it is a SQL view, which is stale while an
+        # upgrade is still loading the modules that contribute columns to
+        # it, and the leave re-evaluation runs this engine from there.
+        employee = self.env["hr.employee"].sudo().browse(employee_id)
         list_by_dates = (
             self.env["calendar.public.holiday"]
             .get_holidays_list(
                 start_dt=start_dt.date(),
                 end_dt=end_dt.date(),
                 partner_id=employee.address_id.id,
-                region_ids=region.ids,
+                region_ids=employee.public_holiday_region_id.ids,
             )
             .mapped("date")
         )

@@ -8,8 +8,8 @@ For using public holidays on leaves:
 1.  Go to *Time Off \> Dashboard*.
 2.  Select dragging on the calendar the days you want to be on leave, or
     go to the form view for selecting start and end dates.
-3.  Select the proper "Leave Type" that has "Exclude Public Holidays"
-    checked.
+3.  Select the proper "Leave Type" that does not have "Ignore Public
+    Holidays" checked.
 4.  If no leave type is yet specified, then default configuration is to
     exclude public holidays.
 5.  The number of days will be computed excluding public holidays that
