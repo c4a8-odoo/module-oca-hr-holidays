@@ -13,8 +13,6 @@ class HrWorkLocation(models.Model):
         help="The public holiday region standing for this work location. "
         "Everybody working here follows it: the assignment on the employee "
         "is derived from the work location of each version (contract). "
-        "Installing the module links every work location to the region "
-        "named after the state of its address, or builds one region per "
-        "work location, owned by its company and carrying the country of "
-        "its address.",
+        "Installing the module builds one region per work location, owned "
+        "by its company and carrying the country and state of its address.",
     )

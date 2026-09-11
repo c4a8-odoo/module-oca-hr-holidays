@@ -423,11 +423,12 @@ on the Payroll tab below the working hours. Regions are maintained
 under <em>Time Off -&gt; Configuration -&gt; Public Holidays (OCA) -&gt; Public
 Holiday Regions</em>.</li>
 </ul>
-<p>Installing the module links every work location to a region: the region
-named after the state of its address where <tt class="docutils literal">calendar_public_holiday</tt>
-created one from the former related states, otherwise a region of its
-own, named after the work location, owned by its company and carrying
-the country of its address.</p>
+<p>Installing the module gives every work location a region of its own,
+named after the work location, owned by its company and carrying the
+country and state of its address. Public holidays that were scoped to
+states before the upgrade are then assigned to the regions lying in
+those states; a public holiday whose states no work location lies in is
+disabled until a region of that state exists.</p>
 <p>The country of a region decides which public holiday calendars apply to
 the people assigned to it; the country of the work address only stands
 in for an employee without a region, and the company’s country for one
@@ -492,10 +493,11 @@ the standard <em>Ignore Public Holidays</em> setting, which means the
 opposite. Upgrading carries the value over.</li>
 <li>Public holidays follow the public holiday region of the employee,
 derived from their work location, instead of the state of their work
-address. Upgrading links every work location to the region created
-from its state by <tt class="docutils literal">calendar_public_holiday</tt>, or gives it a region
-of its own, owned by its company. The country of the region selects
-the public holiday calendars.</li>
+address. Upgrading gives every work location a region of its own,
+owned by its company and carrying the country and state of its
+address, and assigns the public holidays formerly scoped to states to
+the regions in those states. The country of the region selects the
+public holiday calendars.</li>
 </ul>
 </div>
 </div>

@@ -13,11 +13,12 @@ location
   *Time Off -\> Configuration -\> Public Holidays (OCA) -\> Public Holiday
   Regions*.
 
-Installing the module links every work location to a region: the region
-named after the state of its address where `calendar_public_holiday` created
-one from the former related states, otherwise a region of its own, named
-after the work location, owned by its company and carrying the country of
-its address.
+Installing the module gives every work location a region of its own, named
+after the work location, owned by its company and carrying the country and
+state of its address. Public holidays that were scoped to states before the
+upgrade are then assigned to the regions lying in those states; a public
+holiday whose states no work location lies in is disabled until a region
+of that state exists.
 
 The country of a region decides which public holiday calendars apply to the
 people assigned to it; the country of the work address only stands in for

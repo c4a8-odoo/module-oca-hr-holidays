@@ -69,11 +69,12 @@ location
    under *Time Off -> Configuration -> Public Holidays (OCA) -> Public
    Holiday Regions*.
 
-Installing the module links every work location to a region: the region
-named after the state of its address where ``calendar_public_holiday``
-created one from the former related states, otherwise a region of its
-own, named after the work location, owned by its company and carrying
-the country of its address.
+Installing the module gives every work location a region of its own,
+named after the work location, owned by its company and carrying the
+country and state of its address. Public holidays that were scoped to
+states before the upgrade are then assigned to the regions lying in
+those states; a public holiday whose states no work location lies in is
+disabled until a region of that state exists.
 
 The country of a region decides which public holiday calendars apply to
 the people assigned to it; the country of the work address only stands
@@ -144,10 +145,11 @@ Changelog
    opposite. Upgrading carries the value over.
 -  Public holidays follow the public holiday region of the employee,
    derived from their work location, instead of the state of their work
-   address. Upgrading links every work location to the region created
-   from its state by ``calendar_public_holiday``, or gives it a region
-   of its own, owned by its company. The country of the region selects
-   the public holiday calendars.
+   address. Upgrading gives every work location a region of its own,
+   owned by its company and carrying the country and state of its
+   address, and assigns the public holidays formerly scoped to states to
+   the regions in those states. The country of the region selects the
+   public holiday calendars.
 
 Bug Tracker
 ===========

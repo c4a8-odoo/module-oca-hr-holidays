@@ -1,9 +1,14 @@
 # Copyright 2026 glueckkanja AG
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+from datetime import date
+
 from odoo.tests.common import TransactionCase, tagged
 
-from odoo.addons.hr_holidays_public.hooks import create_regions_from_work_locations
+from odoo.addons.hr_holidays_public.hooks import (
+    bootstrap_regions,
+    create_regions_from_work_locations,
+)
 
 
 class TestRegionBootstrapCommon(TransactionCase):
@@ -48,8 +53,8 @@ class TestRegionBootstrap(TestRegionBootstrapCommon):
     """Installing the module builds the regions from the work locations.
 
     One public holiday region per work location, named after it, owned by
-    its company and carrying the country of its address, with everybody
-    assigned through the work location of their versions.
+    its company and carrying the country and state of its address, with
+    everybody assigned through the work location of their versions.
     """
 
     def test_one_region_per_work_location(self):
@@ -82,6 +87,16 @@ class TestRegionBootstrap(TestRegionBootstrapCommon):
         for region in created:
             self.assertEqual(region.company_id, self.company)
             self.assertEqual(region.country_id, self.country, "the address country")
+            self.assertFalse(region.state_id)
+
+    def test_a_region_carries_the_state_of_the_address(self):
+        state = self.env["res.country.state"].create(
+            {"name": "Bootstrap Bayern", "code": "TBY", "country_id": self.country.id}
+        )
+        office = self._create_work_location("Munich office", state)
+        create_regions_from_work_locations(self.env)
+        self.assertEqual(office.public_holiday_region_id.state_id, state)
+        self.assertEqual(office.public_holiday_region_id.country_id, self.country)
 
     def test_a_region_always_carries_a_company(self):
         office = self._create_work_location("Office")
@@ -130,14 +145,12 @@ class TestRegionBootstrap(TestRegionBootstrapCommon):
         self.assertFalse(loner.public_holiday_region_id)
 
 
-class TestStateRegionLink(TestRegionBootstrapCommon):
-    """A work location in a former public holiday state follows that state.
+class TestLegacyStateBootstrap(TestRegionBootstrapCommon):
+    """The former state-scoped public holidays reach the regions in the state.
 
-    ``calendar_public_holiday`` turns the states its lines used to be scoped
-    to into shared regions named after the state and carrying its country.
-    A work location whose address lies in such a state is linked to that
-    region rather than given one of its own, so that the people working
-    there keep the public holidays of their region.
+    ``calendar_public_holiday`` keeps the states its lines used to be scoped
+    to; once the regions of the work locations exist, carrying the state of
+    their address, those lines are assigned to them.
     """
 
     @classmethod
@@ -146,47 +159,52 @@ class TestStateRegionLink(TestRegionBootstrapCommon):
         cls.state_by = cls.env["res.country.state"].create(
             {"name": "Bootstrap Bayern", "code": "TBY", "country_id": cls.country.id}
         )
-        cls.state_region = cls.region_model.create(
-            {"name": "Bootstrap Bayern", "country_id": cls.country.id}
+        cls.state_nw = cls.env["res.country.state"].create(
+            {"name": "Bootstrap Nordrhein", "code": "TNW", "country_id": cls.country.id}
+        )
+        cls.holiday = cls.env["calendar.public.holiday"].create(
+            {"year": 2025, "country_id": cls.country.id}
+        )
+        cls.line_by = cls.env["calendar.public.holiday.line"].create(
+            {
+                "name": "Fronleichnam",
+                "date": date(2025, 6, 19),
+                "public_holiday_id": cls.holiday.id,
+            }
         )
 
-    def test_a_work_location_in_the_state_is_linked_to_its_region(self):
-        office = self._create_work_location("Munich office", self.state_by)
-        created = create_regions_from_work_locations(self.env)
-        self.assertEqual(office.public_holiday_region_id, self.state_region)
-        self.assertNotIn(self.state_region, created, "reused, not created")
-
-    def test_a_region_of_the_same_name_in_another_country_is_not_taken(self):
-        other_country = self.env["res.country"].create(
-            {"name": "Bootstrap Country 2", "code": "XC"}
+    def _plant_legacy_state(self, line, state):
+        self.env.cr.execute("DROP TABLE IF EXISTS public_holiday_state_rel")
+        self.env.cr.execute(
+            "CREATE TABLE public_holiday_state_rel "
+            "(public_holiday_line_id integer, state_id integer)"
         )
-        self.state_region.country_id = other_country
-        office = self._create_work_location("Munich office", self.state_by)
-        created = create_regions_from_work_locations(self.env)
-        self.assertIn(office.public_holiday_region_id, created)
-        self.assertNotEqual(office.public_holiday_region_id, self.state_region)
+        self.env.cr.execute(
+            "INSERT INTO public_holiday_state_rel VALUES (%s, %s)",
+            (line.id, state.id),
+        )
 
-    def test_a_state_without_a_region_gets_one_of_its_own(self):
-        self.state_region.unlink()
-        office = self._create_work_location("Munich office", self.state_by)
-        created = create_regions_from_work_locations(self.env)
-        self.assertIn(office.public_holiday_region_id, created)
-        self.assertEqual(office.public_holiday_region_id.name, "Munich office")
-        self.assertEqual(office.public_holiday_region_id.company_id, self.company)
-        self.assertEqual(office.public_holiday_region_id.country_id, self.country)
+    def test_the_line_reaches_the_work_locations_in_its_state(self):
+        munich = self._create_work_location("Munich office", self.state_by)
+        cologne = self._create_work_location("Cologne office", self.state_nw)
+        self._plant_legacy_state(self.line_by, self.state_by)
+        bootstrap_regions(self.env)
+        self.assertEqual(self.line_by.region_ids, munich.public_holiday_region_id)
+        self.assertNotIn(cologne.public_holiday_region_id, self.line_by.region_ids)
+        self.assertTrue(self.line_by.active)
+
+    def test_a_line_nobody_works_in_is_disabled(self):
+        self._create_work_location("Cologne office", self.state_nw)
+        self._plant_legacy_state(self.line_by, self.state_by)
+        bootstrap_regions(self.env)
+        self.assertFalse(self.line_by.region_ids)
+        self.assertFalse(self.line_by.active)
 
 
 @tagged("post_install", "-at_install")
-class TestStateRegionLinkCompany(TestStateRegionLink):
+class TestRegionBootstrapCompany(TestRegionBootstrapCommon):
     """Run once everything is loaded: creating a company needs the defaults
     other modules add to ``res.company``."""
-
-    def test_a_region_of_another_company_is_not_taken(self):
-        other = self.env["res.company"].create({"name": "Other Co"})
-        self.state_region.company_id = other
-        office = self._create_work_location("Munich office", self.state_by)
-        create_regions_from_work_locations(self.env)
-        self.assertNotEqual(office.public_holiday_region_id, self.state_region)
 
     def test_a_work_location_of_another_company_gets_its_company(self):
         other = self.env["res.company"].create({"name": "Other Co"})
