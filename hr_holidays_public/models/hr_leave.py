@@ -59,10 +59,11 @@ class HrLeave(models.Model):
     def _get_domain_from_get_unusual_days(self, date_from, date_to=None):
         """Domain of the public holiday lines applying to the employee.
 
-        The country comes from the work address of the employee, falling
-        back to the company; the region is the public holiday region of the
-        employee, derived from their work location. A nationwide line
-        always applies, a regional one only in the employee's region.
+        The region is the public holiday region of the employee, derived
+        from their work location; the country is the one of that region,
+        falling back to the work address of the employee and then to the
+        company. A nationwide line always applies, a regional one only in
+        the employee's region.
         """
         domain = [("date", ">=", date_from)]
         # Use the employee of the user or the one who has the context
@@ -74,12 +75,12 @@ class HrLeave(models.Model):
         )
         if date_to:
             domain.append(("date", "<=", date_to))
-        country_id = employee.address_id.country_id.id
+        region = employee.sudo().public_holiday_region_id
+        country_id = region.country_id.id or employee.address_id.country_id.id
         if not country_id:
             country_id = self.env.company.country_id.id or False
         if country_id:
             domain.append(("public_holiday_id.country_id", "in", (False, country_id)))
-        region = employee.sudo().public_holiday_region_id
         if region:
             domain.extend(
                 [

@@ -6,4 +6,6 @@
 - Public holidays follow the public holiday region of the employee, derived
   from their work location, instead of the state of their work address.
   Upgrading links every work location to the region created from its state
-  by `calendar_public_holiday`, or gives it a region of its own.
+  by `calendar_public_holiday`, or gives it a region of its own, owned by
+  its company. The country of the region selects the public holiday
+  calendars.

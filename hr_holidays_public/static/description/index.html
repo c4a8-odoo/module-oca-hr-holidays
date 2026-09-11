@@ -425,8 +425,13 @@ Holiday Regions</em>.</li>
 </ul>
 <p>Installing the module links every work location to a region: the region
 named after the state of its address where <tt class="docutils literal">calendar_public_holiday</tt>
-created one from the former related states, otherwise one region per
-distinct work address.</p>
+created one from the former related states, otherwise a region of its
+own, named after the work location, owned by its company and carrying
+the country of its address.</p>
+<p>The country of a region decides which public holiday calendars apply to
+the people assigned to it; the country of the work address only stands
+in for an employee without a region, and the company’s country for one
+without a work address.</p>
 </div>
 <div class="section" id="usage">
 <h2><a class="toc-backref" href="#toc-entry-2">Usage</a></h2>
@@ -489,7 +494,8 @@ opposite. Upgrading carries the value over.</li>
 derived from their work location, instead of the state of their work
 address. Upgrading links every work location to the region created
 from its state by <tt class="docutils literal">calendar_public_holiday</tt>, or gives it a region
-of its own.</li>
+of its own, owned by its company. The country of the region selects
+the public holiday calendars.</li>
 </ul>
 </div>
 </div>

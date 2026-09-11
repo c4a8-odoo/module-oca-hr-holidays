@@ -6,24 +6,24 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def _find_state_region(env, state, companies):
+def _find_state_region(env, state, company):
     """The region standing for ``state``, if the upgrade created one.
 
     ``calendar_public_holiday`` turns the states its lines used to be scoped
-    to into shared regions named after the state -- with the country code
-    appended where two countries share a state name. A work location whose
-    address lies in such a state belongs to that region, so that the people
-    working there keep the public holidays of their region.
+    to into shared regions named after the state and carrying its country.
+    A work location whose address lies in such a state belongs to that
+    region, so that the people working there keep the public holidays of
+    their region.
     """
     if not state:
         return env["calendar.public.holiday.region"]
-    names = [state.name, f"{state.name} ({state.country_id.code})"]
     return env["calendar.public.holiday.region"].search(
         [
-            ("name", "in", names),
+            ("name", "=", state.name),
+            ("country_id", "=", state.country_id.id),
             "|",
             ("company_id", "=", False),
-            ("company_id", "in", companies.ids),
+            ("company_id", "=", company.id),
         ],
         order="company_id, id",
         limit=1,
@@ -35,11 +35,10 @@ def create_regions_from_work_locations(env):
 
     Every work location without a public holiday region gets one: the region
     standing for the state of its address where the upgrade built one,
-    otherwise one region per distinct **work address** -- work locations
-    sharing an address describe the same place as far as public holidays
-    are concerned. The assignment of every employee follows from there,
-    since the public holiday region of a version (contract) is derived from
-    its work location.
+    otherwise a region of its own, named after the work location, owned by
+    its company and carrying the country of its address. The assignment of
+    every employee follows from there, since the public holiday region of a
+    version (contract) is derived from its work location.
 
     Idempotent: work locations already carrying a region are left alone.
     Returns the regions created.
@@ -52,27 +51,23 @@ def create_regions_from_work_locations(env):
     )
     created = region_model.browse()
     linked = 0
-    for address in work_locations.address_id:
-        siblings = work_locations.filtered(
-            lambda work_location, address=address: (work_location.address_id == address)
-        )
-        companies = siblings.company_id
-        region = _find_state_region(env, address.state_id, companies)
+    for work_location in work_locations:
+        company = work_location.company_id
+        region = _find_state_region(env, work_location.address_id.state_id, company)
         if region:
-            linked += len(siblings)
+            linked += 1
         else:
+            country = work_location.address_id.country_id or company.country_id
             region = region_model.create(
                 {
-                    # Named after the work location; the first one takes it
-                    # when several share the address.
-                    "name": siblings[0].name,
-                    # A shared address across companies makes a shared region.
-                    "company_id": companies.id if len(companies) == 1 else False,
-                    "active": any(siblings.mapped("active")),
+                    "name": work_location.name,
+                    "company_id": company.id,
+                    "country_id": country.id,
+                    "active": work_location.active,
                 }
             )
             created |= region
-        siblings.write({"public_holiday_region_id": region.id})
+        work_location.public_holiday_region_id = region
     _logger.info(
         "hr_holidays_public: created %s public holiday region(s) for %s work "
         "location(s), linked %s to the region of their state",

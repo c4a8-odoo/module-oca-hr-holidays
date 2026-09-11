@@ -143,6 +143,18 @@ class TestHolidaysPublic(TestCalendarPublicHoliday):
             region_ids=[(6, 0, self.region_1.ids)],
         )
 
+    def test_the_region_country_wins_over_the_work_address(self):
+        """A region of another country hides this country's calendars."""
+        self.assertEqual(self.employee.address_id.country_id, self.country_1)
+        self.region_1.country_id = self.country_2
+        self.work_location.public_holiday_region_id = self.region_1
+        self.assertPublicHolidayIsUnusualDay(False, country_id=self.country_1.id)
+
+    def test_the_region_country_selects_its_own_calendars(self):
+        self.region_1.country_id = self.country_2
+        self.work_location.public_holiday_region_id = self.region_1
+        self.assertPublicHolidayIsUnusualDay(True, country_id=self.country_2.id)
+
     def test_region_follows_the_work_location(self):
         self.work_location.public_holiday_region_id = self.region_1
         self.assertEqual(self.employee.public_holiday_region_id, self.region_1)

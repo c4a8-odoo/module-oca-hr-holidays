@@ -36,13 +36,17 @@ class ResourceCalendar(models.Model):
         # upgrade is still loading the modules that contribute columns to
         # it, and the leave re-evaluation runs this engine from there.
         employee = self.env["hr.employee"].sudo().browse(employee_id)
+        region = employee.public_holiday_region_id
         list_by_dates = (
             self.env["calendar.public.holiday"]
             .get_holidays_list(
                 start_dt=start_dt.date(),
                 end_dt=end_dt.date(),
                 partner_id=employee.address_id.id,
-                region_ids=employee.public_holiday_region_id.ids,
+                region_ids=region.ids,
+                # The country of the region decides; the work address only
+                # stands in for an employee without one.
+                country_id=region.country_id.id,
             )
             .mapped("date")
         )

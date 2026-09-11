@@ -71,8 +71,14 @@ location
 
 Installing the module links every work location to a region: the region
 named after the state of its address where ``calendar_public_holiday``
-created one from the former related states, otherwise one region per
-distinct work address.
+created one from the former related states, otherwise a region of its
+own, named after the work location, owned by its company and carrying
+the country of its address.
+
+The country of a region decides which public holiday calendars apply to
+the people assigned to it; the country of the work address only stands
+in for an employee without a region, and the company's country for one
+without a work address.
 
 Usage
 =====
@@ -140,7 +146,8 @@ Changelog
    derived from their work location, instead of the state of their work
    address. Upgrading links every work location to the region created
    from its state by ``calendar_public_holiday``, or gives it a region
-   of its own.
+   of its own, owned by its company. The country of the region selects
+   the public holiday calendars.
 
 Bug Tracker
 ===========
