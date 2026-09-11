@@ -15,9 +15,9 @@ def create_regions_from_work_locations(env):
 
     Every work location without a public holiday region gets one of its
     own, named after the work location, owned by its company and carrying
-    the country and state of its address. The assignment of every employee
-    follows from there, since the public holiday region of a version
-    (contract) is derived from its work location.
+    the country of its address. The assignment of every employee follows
+    from there, since the public holiday region of a version (contract) is
+    derived from its work location.
 
     Idempotent: work locations already carrying a region are left alone.
     Returns the regions created.
@@ -40,7 +40,6 @@ def create_regions_from_work_locations(env):
                 "name": work_location.name,
                 "company_id": company.id,
                 "country_id": country.id,
-                "state_id": address.state_id.id,
                 "active": work_location.active,
             }
         )
@@ -55,15 +54,42 @@ def create_regions_from_work_locations(env):
     return created
 
 
+def _regions_by_state(env):
+    """The regions lying in each state, from the work addresses.
+
+    A region stands for a work location, and the work location's address
+    says which state it lies in; every region of a work location in a
+    state belongs to that state.
+    """
+    region_model = env["calendar.public.holiday.region"]
+    regions_by_state = {}
+    for work_location in (
+        env["hr.work.location"]
+        .with_context(active_test=False)
+        .search(
+            [
+                ("public_holiday_region_id", "!=", False),
+                ("address_id.state_id", "!=", False),
+            ]
+        )
+    ):
+        state_id = work_location.address_id.state_id.id
+        regions_by_state[state_id] = (
+            regions_by_state.get(state_id, region_model)
+            | work_location.public_holiday_region_id
+        )
+    return regions_by_state
+
+
 def bootstrap_regions(env):
     """Build the regions and hand the former state-scoped lines to them.
 
-    The regions carry the state of their work address, so the public
-    holidays that used to be scoped to a state now reach the regions lying
-    in it; a line whose states no work location lies in stays disabled.
+    The public holidays that used to be scoped to a state reach the regions
+    of the work locations whose address lies in it; a line whose states no
+    work location lies in stays disabled.
     """
     created = create_regions_from_work_locations(env)
-    assign_regions_from_legacy_states(env)
+    assign_regions_from_legacy_states(env, _regions_by_state(env))
     return created
 
 

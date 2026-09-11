@@ -14,11 +14,11 @@ location
   Regions*.
 
 Installing the module gives every work location a region of its own, named
-after the work location, owned by its company and carrying the country and
-state of its address. Public holidays that were scoped to states before the
-upgrade are then assigned to the regions lying in those states; a public
-holiday whose states no work location lies in is disabled until a region
-of that state exists.
+after the work location, owned by its company and carrying the country of
+its address. Public holidays that were scoped to states before the upgrade
+are then assigned to the regions of the work locations whose address lies
+in those states; a public holiday whose states no work location lies in is
+disabled until it is assigned a region by hand.
 
 The country of a region decides which public holiday calendars apply to the
 people assigned to it; the country of the work address only stands in for

@@ -14,5 +14,5 @@ class HrWorkLocation(models.Model):
         "Everybody working here follows it: the assignment on the employee "
         "is derived from the work location of each version (contract). "
         "Installing the module builds one region per work location, owned "
-        "by its company and carrying the country and state of its address.",
+        "by its company and carrying the country of its address.",
     )

@@ -53,8 +53,8 @@ class TestRegionBootstrap(TestRegionBootstrapCommon):
     """Installing the module builds the regions from the work locations.
 
     One public holiday region per work location, named after it, owned by
-    its company and carrying the country and state of its address, with
-    everybody assigned through the work location of their versions.
+    its company and carrying the country of its address, with everybody
+    assigned through the work location of their versions.
     """
 
     def test_one_region_per_work_location(self):
@@ -87,16 +87,6 @@ class TestRegionBootstrap(TestRegionBootstrapCommon):
         for region in created:
             self.assertEqual(region.company_id, self.company)
             self.assertEqual(region.country_id, self.country, "the address country")
-            self.assertFalse(region.state_id)
-
-    def test_a_region_carries_the_state_of_the_address(self):
-        state = self.env["res.country.state"].create(
-            {"name": "Bootstrap Bayern", "code": "TBY", "country_id": self.country.id}
-        )
-        office = self._create_work_location("Munich office", state)
-        create_regions_from_work_locations(self.env)
-        self.assertEqual(office.public_holiday_region_id.state_id, state)
-        self.assertEqual(office.public_holiday_region_id.country_id, self.country)
 
     def test_a_region_always_carries_a_company(self):
         office = self._create_work_location("Office")
@@ -149,8 +139,9 @@ class TestLegacyStateBootstrap(TestRegionBootstrapCommon):
     """The former state-scoped public holidays reach the regions in the state.
 
     ``calendar_public_holiday`` keeps the states its lines used to be scoped
-    to; once the regions of the work locations exist, carrying the state of
-    their address, those lines are assigned to them.
+    to; once the regions of the work locations exist, those lines are
+    assigned to the regions of the work locations whose address lies in
+    one of their states.
     """
 
     @classmethod
@@ -193,12 +184,31 @@ class TestLegacyStateBootstrap(TestRegionBootstrapCommon):
         self.assertNotIn(cologne.public_holiday_region_id, self.line_by.region_ids)
         self.assertTrue(self.line_by.active)
 
-    def test_a_line_nobody_works_in_is_disabled(self):
+    def test_two_work_locations_in_the_state_both_get_the_line(self):
+        munich = self._create_work_location("Munich office", self.state_by)
+        nuremberg = self._create_work_location("Nuremberg office", self.state_by)
+        self._plant_legacy_state(self.line_by, self.state_by)
+        bootstrap_regions(self.env)
+        self.assertEqual(
+            self.line_by.region_ids,
+            munich.public_holiday_region_id | nuremberg.public_holiday_region_id,
+        )
+
+    def test_a_line_nobody_works_in_stays_disabled(self):
+        """The base module disabled it; nothing here enables it."""
         self._create_work_location("Cologne office", self.state_nw)
         self._plant_legacy_state(self.line_by, self.state_by)
+        self.line_by.active = False
         bootstrap_regions(self.env)
         self.assertFalse(self.line_by.region_ids)
         self.assertFalse(self.line_by.active)
+
+    def test_the_bootstrap_enables_a_line_it_gives_a_region(self):
+        self._create_work_location("Munich office", self.state_by)
+        self._plant_legacy_state(self.line_by, self.state_by)
+        self.line_by.active = False
+        bootstrap_regions(self.env)
+        self.assertTrue(self.line_by.active)
 
 
 @tagged("post_install", "-at_install")

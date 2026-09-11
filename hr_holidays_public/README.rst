@@ -71,10 +71,11 @@ location
 
 Installing the module gives every work location a region of its own,
 named after the work location, owned by its company and carrying the
-country and state of its address. Public holidays that were scoped to
-states before the upgrade are then assigned to the regions lying in
-those states; a public holiday whose states no work location lies in is
-disabled until a region of that state exists.
+country of its address. Public holidays that were scoped to states
+before the upgrade are then assigned to the regions of the work
+locations whose address lies in those states; a public holiday whose
+states no work location lies in is disabled until it is assigned a
+region by hand.
 
 The country of a region decides which public holiday calendars apply to
 the people assigned to it; the country of the work address only stands
@@ -146,10 +147,10 @@ Changelog
 -  Public holidays follow the public holiday region of the employee,
    derived from their work location, instead of the state of their work
    address. Upgrading gives every work location a region of its own,
-   owned by its company and carrying the country and state of its
-   address, and assigns the public holidays formerly scoped to states to
-   the regions in those states. The country of the region selects the
-   public holiday calendars.
+   owned by its company and carrying the country of its address, and
+   assigns the public holidays formerly scoped to states to the regions
+   of the work locations in those states. The country of the region
+   selects the public holiday calendars.
 
 Bug Tracker
 ===========
