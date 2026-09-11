@@ -11,7 +11,12 @@ from .common import TestPublicResourceTimesheetCommon
 
 @tagged("post_install", "-at_install")
 class TestScheduleEntryTimesheet(TestPublicResourceTimesheetCommon):
-    """The entry of a listed working schedule timesheets that schedule only."""
+    """The entry of a listed working schedule timesheets that schedule only.
+
+    Only a regional line gets such an entry; a nationwide one is covered by
+    its company-wide record. The region here is one nobody works in, so
+    the schedule entry is the only record generated.
+    """
 
     def _schedule_line(self, day, calendar):
         holiday = (
@@ -26,6 +31,7 @@ class TestScheduleEntryTimesheet(TestPublicResourceTimesheetCommon):
                 "name": "Shift day",
                 "date": day,
                 "public_holiday_id": holiday.id,
+                "state_ids": [Command.set(self.state_nw.ids)],
                 "additional_resource_calendar_ids": [Command.set(calendar.ids)],
             }
         )

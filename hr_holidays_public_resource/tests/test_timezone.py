@@ -36,13 +36,14 @@ class TestTimezone(TestHolidaysPublicResourceCommon):
         )
 
     def _sync_and_get(self, calendar, day):
-        # A line listing the schedule: the schedule-carrying entries are the
-        # only generated records the native create hook touches.
+        # A regional line listing the schedule: the schedule-carrying entries
+        # are the only generated records the native create hook touches.
         line = self.line_model.create(
             {
                 "name": "Timezone check",
                 "date": day,
                 "public_holiday_id": self.holiday.id,
+                "state_ids": [Command.set(self.state_nw.ids)],
                 "additional_resource_calendar_ids": [Command.set(calendar.ids)],
             }
         )
