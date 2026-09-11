@@ -4,9 +4,11 @@ Holidays* setting on the leave type.
 **Nationwide public holidays** are generated once per company, as a global
 time off without working hours that reaches every working schedule of the
 company, and they appear in the standard Public Holidays list. A public
-holiday line can also name **additional working schedules**, which get an
-entry carrying the schedule wherever no company-wide record already applies
--- a special day for one shift plan, say.
+holiday line scoped to states or locations can also name **additional
+working schedules**, which get an entry carrying the schedule so that
+everybody working by it has the day too -- a regional day observed by one
+shift plan, say. A nationwide line needs none: its company-wide record
+already reaches every working schedule.
 
 **Regional public holidays** follow the region of the **work location** of
 each employee -- where the work is actually done -- and are generated for that

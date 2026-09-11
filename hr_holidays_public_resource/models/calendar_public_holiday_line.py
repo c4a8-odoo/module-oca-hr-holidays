@@ -30,11 +30,7 @@ class CalendarPublicHolidayLine(models.Model):
 
     def _public_holiday_scope_description(self):
         self.ensure_one()
-        names = (
-            self.state_ids.mapped("name")
-            + self.location_ids.mapped("name")
-            + self.additional_resource_calendar_ids.mapped("name")
-        )
+        names = self.state_ids.mapped("name") + self.location_ids.mapped("name")
         return self.env._(
             "nobody works in %s (a regional public holiday is given to the "
             "people whose work location is in one of its regions or who are "
