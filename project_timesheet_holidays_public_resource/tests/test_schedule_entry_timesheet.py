@@ -31,7 +31,7 @@ class TestScheduleEntryTimesheet(TestPublicResourceTimesheetCommon):
                 "name": "Shift day",
                 "date": day,
                 "public_holiday_id": holiday.id,
-                "state_ids": [Command.set(self.state_nw.ids)],
+                "region_ids": [Command.set(self.region_nw.ids)],
                 "additional_resource_calendar_ids": [Command.set(calendar.ids)],
             }
         )

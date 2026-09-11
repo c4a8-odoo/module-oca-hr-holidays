@@ -22,10 +22,3 @@ class TestViews(TransactionCase):
             self.env.ref("hr_holidays.resource_calendar_leaves_tree_inherit"),
             "the create button was disabled on a list this action no longer uses",
         )
-
-    def test_empty_work_locations_show_their_placeholder(self):
-        """While editing, an empty cell reads as "applies everywhere"."""
-        arch = self.env.ref(
-            "calendar_public_holiday.view_calendar_public_holiday_form"
-        ).get_combined_arch()
-        self.assertIn('placeholder="All Locations"', arch)

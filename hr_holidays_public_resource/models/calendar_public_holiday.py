@@ -13,8 +13,8 @@ class CalendarPublicHoliday(models.Model):
         """Employees these public holidays actually give a day off.
 
         Nationwide public holidays are generated company-wide and so reach
-        everybody working in a matching company; regional ones are generated
-        for the resource of each employee working in the region. Both are
+        everybody working in a matching company; scoped ones are generated
+        for the resource of each employee at one of the regions. Both are
         counted, the way the synchronisation resolves them.
         """
         self.ensure_one()
@@ -39,22 +39,12 @@ class CalendarPublicHoliday(models.Model):
     @api.depends(
         "country_id",
         "line_ids",
-        "line_ids.state_ids",
-        "line_ids.location_ids",
+        "line_ids.region_ids",
         "line_ids.active",
     )
     def _compute_employee_count(self):
         for record in self:
             record.employee_count = len(record._get_applicable_employees())
-
-    @api.depends("line_ids.location_ids")
-    def _compute_resource_calendar_count(self):
-        # A line scoped to work locations alone is no longer nationwide.
-        return super()._compute_resource_calendar_count()
-
-    @api.depends("line_ids.location_ids")
-    def _compute_sync_warning(self):
-        return super()._compute_sync_warning()
 
     def action_view_employees(self):
         self.ensure_one()

@@ -37,7 +37,7 @@ class TestLeaveDuration(TestHolidaysPublicResourceCommon):
         self.assertEqual(leave.number_of_days, 5)
 
     def test_regional_holiday_only_shortens_the_regional_schedule(self):
-        self._create_line(self.wednesday, name="Fronleichnam", states=self.state_by)
+        self._create_line(self.wednesday, name="Fronleichnam", regions=self.region_by)
         national = self._create_leave(self.employee, self.monday, self.friday)
         regional = self._create_leave(self.employee_by, self.monday, self.friday)
         self.assertEqual(national.number_of_days, 5)

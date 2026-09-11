@@ -11,7 +11,7 @@
                 These public holidays are generated from the public holiday
                 template and kept up to date automatically. Add or change them
                 under
-                <b>Configuration &gt; Public Holidays Template</b>
+                <b>Configuration &gt; Public Holidays (OCA)</b>
                 rather than here. Entries without a public holiday were created by
                 hand and are not maintained; the
                 <b>Not From Public Holidays (OCA)</b>

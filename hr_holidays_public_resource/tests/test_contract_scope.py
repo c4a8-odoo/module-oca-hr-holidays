@@ -23,7 +23,7 @@ class TestContractScope(TestHolidaysPublicResourceCommon):
         )
 
     def test_a_future_version_moves_only_its_period(self):
-        nw_office = self._create_work_location("NW office", self.state_nw)
+        nw_office = self._create_work_location("NW office", self.region_nw)
         self.employee_by.create_version(
             {
                 "date_version": date(self.year, 10, 1),
@@ -31,13 +31,13 @@ class TestContractScope(TestHolidaysPublicResourceCommon):
             }
         )
         spring_by = self._create_line(
-            self._work_monday(), name="BY spring", states=self.state_by
+            self._work_monday(), name="BY spring", regions=self.region_by
         )
         autumn_by = self._create_line(
-            date(self.year, 10, 15), name="BY autumn", states=self.state_by
+            date(self.year, 10, 15), name="BY autumn", regions=self.region_by
         )
         autumn_nw = self._create_line(
-            date(self.year, 10, 16), name="NW autumn", states=self.state_nw
+            date(self.year, 10, 16), name="NW autumn", regions=self.region_nw
         )
         self.assertTrue(
             self._mirror(spring_by, self.employee_by),
@@ -60,7 +60,7 @@ class TestContractScope(TestHolidaysPublicResourceCommon):
             }
         )
         autumn = self._create_line(
-            date(self.year, 10, 15), name="BY autumn", states=self.state_by
+            date(self.year, 10, 15), name="BY autumn", regions=self.region_by
         )
         mirror = self._mirror(autumn, self.employee_by)
         self.assertEqual(
@@ -71,31 +71,31 @@ class TestContractScope(TestHolidaysPublicResourceCommon):
 
     def test_a_day_after_the_contract_end_is_given_to_nobody(self):
         line = self._create_line(
-            date(self.year, 10, 15), name="BY autumn", states=self.state_by
+            date(self.year, 10, 15), name="BY autumn", regions=self.region_by
         )
         self.assertTrue(self._mirror(line, self.employee_by))
         self.employee_by.version_id.contract_date_end = date(self.year, 9, 30)
         self.assertFalse(self._mirror(line, self.employee_by))
         # A day inside the contract stays.
         spring = self._create_line(
-            self._work_monday(), name="BY spring", states=self.state_by
+            self._work_monday(), name="BY spring", regions=self.region_by
         )
         self.assertTrue(self._mirror(spring, self.employee_by))
 
     def test_no_contract_no_public_holiday(self):
-        location = self._create_work_location("Casual office", self.state_by)
+        region = self._create_work_location("Casual office", self.region_by)
         casual = self.env["hr.employee"].create(
             {
                 "name": "Emp Casual",
                 "company_id": self.company.id,
                 "resource_calendar_id": self.calendar_by.id,
                 "address_id": self.company_address.id,
-                "work_location_id": location.id,
+                "work_location_id": region.id,
                 "tz": "Europe/Berlin",
             }
         )
         line = self._create_line(
-            self._work_monday(), name="Fronleichnam", states=self.state_by
+            self._work_monday(), name="Fronleichnam", regions=self.region_by
         )
         self.assertFalse(
             self._mirror(line, casual),

@@ -11,9 +11,9 @@ from . import test_mail_silence
 from . import test_employee_regions
 from . import test_employee_button
 from . import test_regional_effects
-from . import test_locations
-from . import test_location_overview
-from . import test_location_bootstrap
+from . import test_regions
+from . import test_region_overview
+from . import test_region_bootstrap
 from . import test_calendar_overview
 from . import test_contract_scope
 from . import test_hr_version_trigger

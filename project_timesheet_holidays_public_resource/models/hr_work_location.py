@@ -3,7 +3,7 @@
 
 from odoo import models
 
-TIMESHEET_TRIGGER_FIELDS = {"resource_calendar_location_id", "active"}
+TIMESHEET_TRIGGER_FIELDS = {"public_holiday_region_id", "active"}
 
 
 class HrWorkLocation(models.Model):
@@ -12,8 +12,8 @@ class HrWorkLocation(models.Model):
     def write(self, vals):
         """Rebuild the timesheets when the work location is relinked.
 
-        The public holiday location of everybody working here is derived
-        from the work location, so relinking it moves their location-scoped
+        The public holiday region of everybody working here is derived
+        from the work location, so relinking it moves their region-scoped
         days without any version write the timesheet trigger could see. The
         mirrors are resynchronised first, through the trigger below this
         one.

@@ -36,7 +36,7 @@ class TestRegionalEffects(TestHolidaysPublicResourceCommon):
         )
 
     def test_the_day_is_greyed_out_for_that_person(self):
-        self._create_line(self.wednesday, name="Fronleichnam", states=self.state_by)
+        self._create_line(self.wednesday, name="Fronleichnam", regions=self.region_by)
         key = fields.Date.to_string(self.wednesday)
         self.assertTrue(
             self._unusual(self.employee_by)[key],
@@ -44,12 +44,12 @@ class TestRegionalEffects(TestHolidaysPublicResourceCommon):
         )
 
     def test_the_day_stays_a_working_day_for_everybody_else(self):
-        self._create_line(self.wednesday, name="Fronleichnam", states=self.state_by)
+        self._create_line(self.wednesday, name="Fronleichnam", regions=self.region_by)
         key = fields.Date.to_string(self.wednesday)
         self.assertFalse(self._unusual(self.employee)[key])
 
     def test_the_leave_duration_skips_it(self):
-        self._create_line(self.wednesday, name="Fronleichnam", states=self.state_by)
+        self._create_line(self.wednesday, name="Fronleichnam", regions=self.region_by)
         leave = self._create_leave(
             self.employee_by, self.monday, self.monday + timedelta(days=4)
         )

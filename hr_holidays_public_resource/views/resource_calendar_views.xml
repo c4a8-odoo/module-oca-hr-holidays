@@ -12,11 +12,10 @@
                 expr="//field[@name='public_holiday_overview_line_ids']/list/field[@name='name']"
                 position="after"
             >
-                <field name="state_ids" widget="many2many_tags" optional="show" />
                 <field
-                    name="location_ids"
+                    name="region_ids"
                     widget="many2many_tags"
-                    placeholder="All Locations"
+                    placeholder="All Regions"
                     optional="show"
                 />
             </xpath>

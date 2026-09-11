@@ -71,7 +71,7 @@ class TestReevaluate(TestHolidaysPublicResourceCommon):
         """
         leave_by = self._create_leave(self.employee_by, self.monday, self.friday)
         self.assertEqual(leave_by.number_of_days, 5)
-        self._create_line(self.wednesday, name="Fronleichnam", states=self.state_by)
+        self._create_line(self.wednesday, name="Fronleichnam", regions=self.region_by)
         self.assertEqual(leave_by.number_of_days, 4)
         self.assertEqual(leave_by.state, "validate")
         self.assertEqual(self.leave.number_of_days, 5, "not in the region")
@@ -79,7 +79,7 @@ class TestReevaluate(TestHolidaysPublicResourceCommon):
     def test_removing_the_regional_public_holiday_restores_the_leave(self):
         leave_by = self._create_leave(self.employee_by, self.monday, self.friday)
         line = self._create_line(
-            self.wednesday, name="Fronleichnam", states=self.state_by
+            self.wednesday, name="Fronleichnam", regions=self.region_by
         )
         self.assertEqual(leave_by.number_of_days, 4)
         line.unlink()
@@ -88,7 +88,7 @@ class TestReevaluate(TestHolidaysPublicResourceCommon):
     def test_moving_the_regional_public_holiday_keeps_the_leave_consistent(self):
         leave_by = self._create_leave(self.employee_by, self.monday, self.friday)
         line = self._create_line(
-            self.wednesday, name="Fronleichnam", states=self.state_by
+            self.wednesday, name="Fronleichnam", regions=self.region_by
         )
         self.assertEqual(leave_by.number_of_days, 4)
         line.date = self.monday + timedelta(days=7)

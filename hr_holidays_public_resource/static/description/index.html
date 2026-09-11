@@ -390,23 +390,20 @@ shown as unavailable in gantt views;</li>
 a public holiday is added, moved or removed;</li>
 <li>with <tt class="docutils literal">project_timesheet_holidays</tt> installed, a timesheet entry is
 generated on a public holiday for every employee it applies to – the
-regional, per-person part of this is provided by the
+per-person part of this is provided by the
 <tt class="docutils literal">project_timesheet_holidays_public_resource</tt> bridge module, which
 installs automatically;</li>
-<li>regional public holidays are resolved to the employees whose work
-location is in the region, so that colleagues sharing a working
-schedule keep their own;</li>
-<li>a public holiday line can also be assigned to public holiday
-locations directly – a lean location model every employee is
-assigned to – for public holidays observed only in some
-municipalities, which no state can express;</li>
-<li>the public holiday location form shows a read-only overview of every
-public holiday applying there.</li>
+<li>region-scoped public holidays are resolved to the employees assigned
+to one of the regions – the public holiday region
+<tt class="docutils literal">hr_holidays_public</tt> derives from the work location of their
+contract – so that colleagues sharing a working schedule keep their
+own.</li>
 </ul>
-<p>This module replaces <tt class="docutils literal">hr_holidays_public</tt>, which it excludes: that
-module solves the same problem through a private
-<tt class="docutils literal">_attendance_intervals_batch</tt> override that no standard module is
-aware of.</p>
+<p><tt class="docutils literal">hr_holidays_public</tt> on its own takes public holidays out of the
+working time through a private <tt class="docutils literal">_attendance_intervals_batch</tt> override
+that no standard module is aware of. This module switches that engine
+off: the generated time off is what standard excludes, and the standard
+<em>Ignore Public Holidays</em> setting of the leave type decides.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -424,81 +421,74 @@ aware of.</p>
 </div>
 <div class="section" id="installation">
 <h2><a class="toc-backref" href="#toc-entry-1">Installation</a></h2>
-<p>This module replaces <tt class="docutils literal">hr_holidays_public</tt> and declares it as
-incompatible, so the two can never be installed at the same time.</p>
-<p>Recommended order:</p>
-<ol class="arabic simple">
-<li>uninstall <tt class="docutils literal">hr_holidays_public</tt>;</li>
-<li>install <tt class="docutils literal">calendar_public_holiday_resource</tt>, which generates the
-time off of the current year onwards and logs any public holiday it
-could not apply;</li>
-<li>install this module.</li>
-</ol>
+<p>This module depends on <tt class="docutils literal">hr_holidays_public</tt>, which carries the public
+holiday regions of the employees, and on
+<tt class="docutils literal">calendar_public_holiday_resource</tt>, which generates the time off.
+Installing it installs both.</p>
+<p>The <em>Exclude Public Holidays</em> flag of <tt class="docutils literal">hr_holidays_public</tt> has no
+effect once this module is installed: every public holiday exists as
+global time off, and the standard <em>Ignore Public Holidays</em> setting of
+the leave type decides whether a leave counts them.</p>
 </div>
 <div class="section" id="configuration">
 <h2><a class="toc-backref" href="#toc-entry-2">Configuration</a></h2>
 <p>Whether a leave counts a public holiday is the standard <em>Ignore Public
-Holidays</em> setting on the leave type.</p>
+Holidays</em> setting on the leave type. The <em>Exclude Public Holidays</em> flag
+of <tt class="docutils literal">hr_holidays_public</tt> is hidden: its engine is switched off here.</p>
 <p><strong>Nationwide public holidays</strong> are generated once per company, as a
 global time off without working hours that reaches every working
 schedule of the company, and they appear in the standard Public Holidays
-list. A public holiday line scoped to states or locations can also name
-<strong>additional working schedules</strong>, which get an entry carrying the
-schedule so that everybody working by it has the day too – a regional
-day observed by one shift plan, say. A nationwide line needs none: its
-company-wide record already reaches every working schedule.</p>
-<p><strong>Regional public holidays</strong> follow the region of the <strong>work location</strong>
-of each employee – where the work is actually done – and are generated
-for that person alone. The work address of an employee record is usually
-the company address and says nothing about the region, so an employee
-without a work location only gets the nationwide ones. They are
+list. A public holiday line scoped to regions can also name <strong>additional
+working schedules</strong>, which get an entry carrying the schedule so that
+everybody working by it has the day too – a regional day observed by
+one shift plan, say. A nationwide line needs none: its company-wide
+record already reaches every working schedule.</p>
+<p><strong>Region-scoped public holidays</strong> follow the <strong>public holiday region</strong>
+of each employee and are generated for that person alone. They are
 therefore not in the Public Holidays list, which is company-wide: they
 show on the person’s own time off calendar, count against their leaves,
 appear in the gantt and produce their timesheet entry. Colleagues
-sharing one working schedule but working in different states each get
+sharing one working schedule but working at different regions each get
 their own.</p>
-<p>A region does not have to be a whole state. Every employee carries a
-<strong>public holiday location</strong> (<em>resource.calendar.location</em>, shown
-read-only on the Payroll tab, below the working hours) – a plain label
-of where they work, without the address a standard work location
-demands. It is derived from the work location of each version
+<p>A public holiday region (<em>calendar.public.holiday.region</em>, maintained
+under <em>Configuration &gt; Public Holiday Regions</em>) is a plain label of
+where somebody works, without the address a standard work location
+demands – a state, a plant, the Catholic municipalities of Bavaria.
+Every employee carries one, shown read-only on the Payroll tab below the
+working hours. It is derived from the work location of each version
 (contract): the mapping is maintained once, on the work location. A
-public holiday line can name locations directly, next to (or instead of)
-its states: everybody assigned to one of the line’s locations <em>or</em> whose
-work location is in one of its states gets the day. This covers public
-holidays observed only in some municipalities – Augsburg’s
-Friedensfest, or Assumption Day in the Catholic municipalities of
-Bavaria – where assigning people the right location is far easier than
-expressing the geography per holiday. The assignment is maintained on
-the public holiday line; while editing, an empty location cell reads
-<em>All Locations</em>. The <em>Create Next Year</em> copy carries the locations of
-each line over to the new year. Installing the module bootstraps the
-locations from the existing work locations – one per distinct work
-address, linked back to its work locations – and everybody follows
-through their work location automatically. Every line with <em>Related
-States</em> is then seeded with the locations whose origin work address lies
-in one of them; the states are kept, so the seeding changes nothing
-about who gets which day until somebody edits the lines.</p>
-<p>A line whose locations are all gone loses its scope and would fall back
-to applying to everybody. Disable the line instead of deleting it: it
-then generates no time off but keeps its configuration for the day the
-locations return. Whether the employees of a schedule get the personal
-entries of regional public holidays at all is the <em>Apply Employee Public
-Holidays</em> setting of the working schedule.</p>
-<p>The public holiday location form shows a read-only overview of every
+public holiday line names the regions it applies to; everybody assigned
+to one of them gets the day. The assignment is maintained on the public
+holiday line; while editing, an empty region cell reads <em>All Regions</em>.
+The <em>Create Next Year</em> copy carries the regions of each line over to the
+new year.</p>
+<p>Installing the module bootstraps the assignment from the existing work
+regions. A work location whose address lies in a state that
+<tt class="docutils literal">calendar_public_holiday</tt> turned into a region (a database upgraded
+from state-scoped public holidays) is linked to that region, so the
+people working there keep the public holidays of their region; every
+other work region gets one region per distinct work address, linked back
+to it. Everybody follows through their work location automatically.</p>
+<p>A line whose regions are all gone loses its scope and would fall back to
+applying to everybody. Disable the line instead of deleting it: it then
+generates no time off but keeps its configuration for the day the
+regions return. Whether the employees of a schedule get the personal
+entries of region-scoped public holidays at all is the <em>Apply Employee
+Public Holidays</em> setting of the working schedule.</p>
+<p>The public holiday region form shows a read-only overview of every
 public holiday applying there: the nationwide ones and the ones assigned
 to it directly. The working schedule form shows the same kind of
 overview for the days that reach the schedule: the nationwide ones of
-its companies, plus the regional and location-scoped days resolved from
-its employees.</p>
+its companies, plus the region-scoped days resolved from its employees.</p>
 <p>The work location and the working schedule of an employee live on their
 versions (contracts), and the public holidays follow the version valid
 on their day: a contract change in October moves the October holidays to
-the new location and schedule without touching the March ones, including
+the new region and schedule without touching the March ones, including
 for versions dated in the future. A day no contract covers is given to
 nobody – an employee without a contract gets no public holidays at all.</p>
 <p>A calendar shown for nobody in particular only shows the nationwide
-public holidays as free days, since a regional one belongs to a person.</p>
+public holidays as free days, since a region-scoped one belongs to a
+person.</p>
 <p>The public holiday template shows how far it reaches, with a smart
 button for the working schedules its nationwide holidays are put on and
 one for all the employees it gives a day off.</p>

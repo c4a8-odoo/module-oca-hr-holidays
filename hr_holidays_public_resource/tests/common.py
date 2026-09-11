@@ -31,12 +31,9 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
         cls.env["res.company"].sudo().search([("id", "!=", cls.env.company.id)]).write(
             {"country_id": cls.env.ref("base.it").id}
         )
-        cls.state_by = cls.env["res.country.state"].create(
-            {"name": "Test Bayern", "code": "TBY", "country_id": cls.country.id}
-        )
-        cls.state_nw = cls.env["res.country.state"].create(
-            {"name": "Test Nordrhein", "code": "TNW", "country_id": cls.country.id}
-        )
+        # Two regions standing for two regions, shared by every company.
+        cls.region_by = cls._create_region("Test Bayern")
+        cls.region_nw = cls._create_region("Test Nordrhein")
         # The current company is reused rather than a fresh one: several
         # timesheet modules add required columns to res.company that a bare
         # create() does not fill in.
@@ -68,11 +65,11 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
         cls.company_address = cls.env["res.partner"].create(
             {"name": "Head office", "country_id": cls.country.id}
         )
-        # A regional public holiday follows where the work is done, so the
-        # work location of the employee is what puts them in Bayern.
+        # A scoped public holiday follows where the work is done, so the work
+        # region of the employee is what puts them in Bayern.
         cls.employee = cls._create_employee("Emp National", cls.calendar)
         cls.employee_by = cls._create_employee(
-            "Emp Bayern", cls.calendar_by, cls.state_by
+            "Emp Bayern", cls.calendar_by, cls.region_by
         )
 
         cls.holiday = cls.holiday_model.create(
@@ -90,29 +87,26 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
         )
 
     @classmethod
-    def _create_work_location(cls, name, state):
-        """A place of work in a region, which is what a holiday follows."""
+    def _create_work_location(cls, name, region=None):
+        """A place of work standing for a region, which a holiday follows."""
         address = cls.env["res.partner"].create(
-            {
-                "name": f"{name} address",
-                "country_id": cls.country.id,
-                "state_id": state.id if state else False,
-            }
+            {"name": f"{name} address", "country_id": cls.country.id}
         )
         return cls.env["hr.work.location"].create(
             {
                 "name": name,
                 "company_id": cls.company.id,
                 "address_id": address.id,
+                "public_holiday_region_id": region.id if region else False,
             }
         )
 
     @classmethod
-    def _create_employee(cls, name, calendar, state=None, work_location=True):
-        # The work address is the company's, as it usually is, so that the
-        # region can only come from the work location.
-        location = (
-            cls._create_work_location(f"{name} office", state)
+    def _create_employee(cls, name, calendar, region=None, work_location=True):
+        # The work address is the company's, as it usually is; the region
+        # can only come from the work location.
+        work_location = (
+            cls._create_work_location(f"{name} office", region)
             if work_location
             else cls.env["hr.work.location"]
         )
@@ -122,7 +116,7 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
                 "company_id": cls.company.id,
                 "resource_calendar_id": calendar.id,
                 "address_id": cls.company_address.id,
-                "work_location_id": location.id,
+                "work_location_id": work_location.id,
                 "tz": "Europe/Berlin",
                 # Since odoo/odoo@45c601bf every day outside of an employee's
                 # contract counts as an unusual day, so the fixtures need a
@@ -134,21 +128,20 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
         )
 
     @classmethod
-    def _create_location(cls, name, company=None):
-        """A public holiday location, the label days are assigned by."""
-        return cls.env["resource.calendar.location"].create(
+    def _create_region(cls, name, company=None):
+        """A public holiday region, the label days are assigned by."""
+        return cls.env["calendar.public.holiday.region"].create(
             {"name": name, "company_id": company.id if company else False}
         )
 
     @classmethod
-    def _create_line(cls, day, name="Holiday", states=None, locations=None):
+    def _create_line(cls, day, name="Holiday", regions=None):
         return cls.line_model.create(
             {
                 "name": name,
                 "date": day,
                 "public_holiday_id": cls.holiday.id,
-                "state_ids": [Command.set(states.ids)] if states else False,
-                "location_ids": ([Command.set(locations.ids)] if locations else False),
+                "region_ids": ([Command.set(regions.ids)] if regions else False),
             }
         )
 

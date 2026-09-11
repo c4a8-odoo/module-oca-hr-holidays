@@ -1,9 +1,8 @@
-This module replaces `hr_holidays_public` and declares it as incompatible, so
-the two can never be installed at the same time.
+This module depends on `hr_holidays_public`, which carries the public holiday
+regions of the employees, and on `calendar_public_holiday_resource`, which
+generates the time off. Installing it installs both.
 
-Recommended order:
-
-1. uninstall `hr_holidays_public`;
-2. install `calendar_public_holiday_resource`, which generates the time off of
-   the current year onwards and logs any public holiday it could not apply;
-3. install this module.
+The *Exclude Public Holidays* flag of `hr_holidays_public` has no effect once
+this module is installed: every public holiday exists as global time off, and
+the standard *Ignore Public Holidays* setting of the leave type decides whether
+a leave counts them.

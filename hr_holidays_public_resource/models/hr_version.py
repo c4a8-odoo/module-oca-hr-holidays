@@ -1,7 +1,7 @@
 # Copyright 2026 glueckkanja AG
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import api, models
 
 SYNC_TRIGGER_FIELDS = {
     "work_location_id",
@@ -15,21 +15,6 @@ SYNC_TRIGGER_FIELDS = {
 
 class HrVersion(models.Model):
     _inherit = "hr.version"
-
-    # On the version, like the work location and the working schedule: the
-    # public holidays of a period follow the contract valid then. Delegated
-    # onto the employee through `_inherits`, where it shows read-only: the
-    # value follows the public holiday location of the work location, so
-    # there is exactly one place to maintain the mapping.
-    # Not stored: searches through the field delegate to the related path
-    # automatically, and an unstored value can never go stale.
-    resource_calendar_location_id = fields.Many2one(
-        "resource.calendar.location",
-        string="Public Holiday Location",
-        related="work_location_id.resource_calendar_location_id",
-        help="The place of work whose public holidays this person gets, on "
-        "top of the nationwide ones. Derived from the work location.",
-    )
 
     @api.model_create_multi
     def create(self, vals_list):

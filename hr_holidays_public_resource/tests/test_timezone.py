@@ -43,7 +43,7 @@ class TestTimezone(TestHolidaysPublicResourceCommon):
                 "name": "Timezone check",
                 "date": day,
                 "public_holiday_id": self.holiday.id,
-                "state_ids": [Command.set(self.state_nw.ids)],
+                "region_ids": [Command.set(self.region_nw.ids)],
                 "additional_resource_calendar_ids": [Command.set(calendar.ids)],
             }
         )
@@ -100,7 +100,7 @@ class TestTimezone(TestHolidaysPublicResourceCommon):
         """Personal mirrors never see the native create hook at all."""
         self.env.user.tz = "America/New_York"
         day = self._work_monday() + timedelta(days=4)
-        line = self._create_line(day, name="Regional check", states=self.state_by)
+        line = self._create_line(day, name="Regional check", regions=self.region_by)
         mirror = self.leave_model.search(
             [
                 ("public_holiday_line_id", "=", line.id),

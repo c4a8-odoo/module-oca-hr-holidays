@@ -12,18 +12,16 @@ This module adds the HR side of that integration:
 - leaves and timesheets that were already approved are recomputed when a public
   holiday is added, moved or removed;
 - with `project_timesheet_holidays` installed, a timesheet entry is generated on
-  a public holiday for every employee it applies to -- the regional, per-person
-  part of this is provided by the `project_timesheet_holidays_public_resource`
-  bridge module, which installs automatically;
-- regional public holidays are resolved to the employees whose work location is
-  in the region, so that colleagues sharing a working schedule keep their own;
-- a public holiday line can also be assigned to public holiday locations
-  directly -- a lean location model every employee is assigned to -- for
-  public holidays observed only in some municipalities, which no state can
-  express;
-- the public holiday location form shows a read-only overview of every public holiday
-  applying there.
+  a public holiday for every employee it applies to -- the per-person part of
+  this is provided by the `project_timesheet_holidays_public_resource` bridge
+  module, which installs automatically;
+- region-scoped public holidays are resolved to the employees assigned to
+  one of the regions -- the public holiday region `hr_holidays_public`
+  derives from the work location of their contract -- so that colleagues
+  sharing a working schedule keep their own.
 
-This module replaces `hr_holidays_public`, which it excludes: that module solves
-the same problem through a private `_attendance_intervals_batch` override that
-no standard module is aware of.
+`hr_holidays_public` on its own takes public holidays out of the working
+time through a private `_attendance_intervals_batch` override that no
+standard module is aware of. This module switches that engine off: the
+generated time off is what standard excludes, and the standard *Ignore
+Public Holidays* setting of the leave type decides.

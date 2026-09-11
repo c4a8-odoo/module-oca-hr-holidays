@@ -8,39 +8,39 @@ from odoo import Command
 from .common import TestHolidaysPublicResourceCommon
 
 
-class TestLocationOverview(TestHolidaysPublicResourceCommon):
-    """The read-only overview on the public holiday location form.
+class TestRegionOverview(TestHolidaysPublicResourceCommon):
+    """The read-only overview on the public holiday region form.
 
-    A union of everything somebody assigned to the location gets: the
+    A union of everything somebody assigned to the region gets: the
     nationwide public holidays and the ones assigned to it directly.
     """
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.location = cls._create_location("Augsburg", company=cls.company)
-        cls.location_plain = cls._create_location("Elsewhere", company=cls.company)
+        cls.region = cls._create_region("Augsburg", company=cls.company)
+        cls.region_plain = cls._create_region("Elsewhere", company=cls.company)
         day = cls._work_monday()
         cls.line_national = cls._create_line(day, name="National")
         cls.line_direct = cls._create_line(
-            day + timedelta(days=1), name="Friedensfest", locations=cls.location
+            day + timedelta(days=1), name="Friedensfest", regions=cls.region
         )
 
-    def _overview(self, location):
-        location.invalidate_recordset(["public_holiday_overview_line_ids"])
-        return location.public_holiday_overview_line_ids
+    def _overview(self, region):
+        region.invalidate_recordset(["public_holiday_overview_line_ids"])
+        return region.public_holiday_overview_line_ids
 
     def test_nationwide_shows_everywhere(self):
-        self.assertIn(self.line_national, self._overview(self.location))
-        self.assertIn(self.line_national, self._overview(self.location_plain))
+        self.assertIn(self.line_national, self._overview(self.region))
+        self.assertIn(self.line_national, self._overview(self.region_plain))
 
     def test_direct_assignment_shows_only_there(self):
-        self.assertIn(self.line_direct, self._overview(self.location))
-        self.assertNotIn(self.line_direct, self._overview(self.location_plain))
+        self.assertIn(self.line_direct, self._overview(self.region))
+        self.assertNotIn(self.line_direct, self._overview(self.region_plain))
 
     def test_assignment_change_updates_the_overview(self):
-        self.line_direct.location_ids = [Command.link(self.location_plain.id)]
-        self.assertIn(self.line_direct, self._overview(self.location_plain))
+        self.line_direct.region_ids = [Command.link(self.region_plain.id)]
+        self.assertIn(self.line_direct, self._overview(self.region_plain))
 
     def test_foreign_country_is_ruled_out(self):
         foreign = self.line_model.create(
@@ -52,15 +52,15 @@ class TestLocationOverview(TestHolidaysPublicResourceCommon):
                 ).id,
             }
         )
-        self.assertNotIn(foreign, self._overview(self.location))
+        self.assertNotIn(foreign, self._overview(self.region))
 
-    def test_a_location_without_a_company_sees_everything(self):
+    def test_a_region_without_a_company_sees_everything(self):
         """An unknown company country cannot rule a holiday calendar out."""
-        shared = self._create_location("Shared")
+        shared = self._create_region("Shared")
         self.assertIn(self.line_national, self._overview(shared))
 
     def test_overview_is_readonly(self):
-        field = self.env["resource.calendar.location"]._fields[
+        field = self.env["calendar.public.holiday.region"]._fields[
             "public_holiday_overview_line_ids"
         ]
         self.assertTrue(field.compute)

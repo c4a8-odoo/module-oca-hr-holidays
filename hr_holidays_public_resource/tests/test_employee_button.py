@@ -28,17 +28,17 @@ class TestEmployeeButton(TestHolidaysPublicResourceCommon):
 
     def test_a_regional_holiday_reaches_that_region_only(self):
         self._create_line(
-            date(self.year, 6, 19), name="Fronleichnam", states=self.state_by
+            date(self.year, 6, 19), name="Fronleichnam", regions=self.region_by
         )
         self.assertEqual(self.holiday._get_applicable_employees(), self.employee_by)
 
     def test_a_colleague_sharing_the_schedule_is_left_out(self):
         """Regional public holidays follow the person, not their schedule."""
         sharing = self._create_employee(
-            "Emp Nordrhein", self.calendar_by, self.state_nw
+            "Emp Nordrhein", self.calendar_by, self.region_nw
         )
         self._create_line(
-            date(self.year, 6, 19), name="Fronleichnam", states=self.state_by
+            date(self.year, 6, 19), name="Fronleichnam", regions=self.region_by
         )
         applicable = self.holiday._get_applicable_employees()
         self.assertIn(self.employee_by, applicable)
@@ -46,7 +46,7 @@ class TestEmployeeButton(TestHolidaysPublicResourceCommon):
 
     def test_the_button_opens_exactly_those_employees(self):
         self._create_line(
-            date(self.year, 6, 19), name="Fronleichnam", states=self.state_by
+            date(self.year, 6, 19), name="Fronleichnam", regions=self.region_by
         )
         action = self.holiday.action_view_employees()
         self.assertEqual(action["res_model"], "hr.employee")
@@ -62,7 +62,7 @@ class TestEmployeeButton(TestHolidaysPublicResourceCommon):
         reach follows the flag.
         """
         self._create_line(
-            date(self.year, 6, 19), name="Fronleichnam", states=self.state_by
+            date(self.year, 6, 19), name="Fronleichnam", regions=self.region_by
         )
         self.calendar_by.public_holiday_employee_sync = False
         self.assertNotIn(self.employee_by, self.holiday._get_applicable_employees())

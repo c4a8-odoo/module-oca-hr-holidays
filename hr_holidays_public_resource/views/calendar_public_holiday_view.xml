@@ -21,38 +21,6 @@
                     <field name="employee_count" widget="statinfo" string="Employees" />
                 </button>
             </div>
-            <xpath
-                expr="//field[@name='line_ids']/list/field[@name='state_ids']"
-                position="after"
-            >
-                <field
-                    name="location_ids"
-                    widget="many2many_tags"
-                    placeholder="All Locations"
-                    optional="show"
-                />
-            </xpath>
-            <field name="state_ids" position="attributes">
-                <attribute name="optional">hide</attribute>
-            </field>
-        </field>
-    </record>
-
-    <record id="view_calendar_public_holiday_line_form" model="ir.ui.view">
-        <field name="name">calendar.public.holiday.line.form.work.location</field>
-        <field name="model">calendar.public.holiday.line</field>
-        <field
-            name="inherit_id"
-            ref="calendar_public_holiday_resource.view_calendar_public_holiday_line_form"
-        />
-        <field name="arch" type="xml">
-            <field name="state_ids" position="after">
-                <field
-                    name="location_ids"
-                    widget="many2many_tags"
-                    placeholder="All Locations"
-                />
-            </field>
         </field>
     </record>
 </odoo>

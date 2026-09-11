@@ -10,23 +10,15 @@
     "category": "Human Resources",
     "author": "glueckkanja AG, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/hr-holidays",
-    "depends": ["calendar_public_holiday_resource", "hr_holidays"],
-    # hr_holidays_public implements the very same feature through a private
-    # `_attendance_intervals_batch` override no standard module knows about.
-    # Running both would apply two competing engines at once.
-    "excludes": ["hr_holidays_public"],
+    "depends": ["calendar_public_holiday_resource", "hr_holidays_public"],
     "demo": [
         "demo/hr_holidays_public_resource_demo.xml",
     ],
     "data": [
-        "security/ir.model.access.csv",
         "views/resource_calendar_leaves_views.xml",
         "views/calendar_public_holiday_view.xml",
-        "views/resource_calendar_location_views.xml",
-        "views/hr_work_location_views.xml",
-        "views/hr_employee_views.xml",
+        "views/hr_leave_type_views.xml",
         "views/resource_calendar_views.xml",
-        "views/menu.xml",
     ],
     "assets": {
         "web.assets_backend": [

@@ -20,18 +20,18 @@ class TestHrVersionTrigger(TestHolidaysPublicResourceCommon):
             ]
         )
 
-    def test_writing_the_location_on_the_version_resyncs(self):
+    def test_writing_the_region_on_the_version_resyncs(self):
         line = self._create_line(
-            self._work_monday(), name="Regional", states=self.state_by
+            self._work_monday(), name="Regional", regions=self.region_by
         )
         self.assertFalse(self._resource_mirror(line, self.employee))
-        bavarian_office = self._create_work_location("Munich office", self.state_by)
+        bavarian_office = self._create_work_location("Munich office", self.region_by)
         self.employee.version_id.write({"work_location_id": bavarian_office.id})
         self.assertTrue(self._resource_mirror(line, self.employee))
 
     def test_writing_the_calendar_on_the_version_resyncs(self):
         line = self._create_line(
-            self._work_monday(), name="Regional", states=self.state_by
+            self._work_monday(), name="Regional", regions=self.region_by
         )
         mirror = self._resource_mirror(line, self.employee_by)
         self.assertEqual(mirror.calendar_id, self.calendar_by)
@@ -41,7 +41,7 @@ class TestHrVersionTrigger(TestHolidaysPublicResourceCommon):
 
     def test_version_write_leaves_nothing_to_update(self):
         line = self._create_line(
-            self._work_monday(), name="Regional", states=self.state_by
+            self._work_monday(), name="Regional", regions=self.region_by
         )
         self.employee_by.version_id.write({"resource_calendar_id": self.calendar.id})
         summary = line._sync_global_leaves()

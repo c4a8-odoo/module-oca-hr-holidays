@@ -45,7 +45,7 @@ class TestUnusualDays(TestHolidaysPublicResourceCommon):
         )
 
     def test_regional_holiday_is_unusual_only_for_that_schedule(self):
-        self._create_line(self.wednesday, name="Fronleichnam", states=self.state_by)
+        self._create_line(self.wednesday, name="Fronleichnam", regions=self.region_by)
         key = fields.Date.to_string(self.wednesday)
         self.assertFalse(self._unusual_days(self.employee)[key])
         self.assertTrue(self._unusual_days(self.employee_by)[key])
