@@ -24,8 +24,7 @@ municipalities of Bavaria -- carrying the country whose public holiday
 calendars apply to it. Every employee carries one, derived by
 `hr_holidays_public` from the work location of each version (contract): the
 mapping is maintained once, on the work location, and `hr_holidays_public`
-bootstraps it on install (the region of the former state, or one region per
-work location). A public holiday line names the regions it applies to;
+bootstraps it on install with one region per work location. A public holiday line names the regions it applies to;
 everybody assigned to one of them gets the day, provided the calendar's
 country matches the region's. While editing, an empty region cell reads
 *All Regions*. The *Create Next Year* copy carries the regions of each line
