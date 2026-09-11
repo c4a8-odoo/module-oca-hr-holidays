@@ -32,11 +32,19 @@ HR Holidays Public
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
 
-The calculation of each leave can exclude rest public holiday, depending
-on the leave type configuration.
+The calculation of each leave can exclude public holidays, depending on
+the leave type configuration.
 
-In HR holiday app, public holiday will be displayed as unusual days
-(grey like weekends).
+In the Time Off app, public holidays are displayed as unusual days (grey
+like weekends).
+
+Public holidays follow the **public holiday region** of each employee: a
+region (see ``calendar_public_holiday``) stands for a place of work, and
+every employee is assigned one through the work location of their
+version (contract). A nationwide public holiday applies to everybody of
+the country; one naming regions only to the people assigned to them.
+Installing the module bootstraps the regions from the existing work
+locations.
 
 **Table of contents**
 
@@ -49,7 +57,21 @@ Configuration
 Go to *Time Off -> Configuration -> Time Off Types* and open a Leave
 Type
 
-- Check "Exclude Public Holidays" to exclude public holidays.
+-  Check "Exclude Public Holidays" to exclude public holidays.
+
+Go to *Employees -> Configuration -> Work Locations* and open a work
+location
+
+-  Set its *Public Holiday Region*. Everybody whose contract names this
+   work location follows it; the region shows read-only on the employee,
+   on the Payroll tab below the working hours. Regions are maintained
+   under *Time Off -> Configuration -> Public Holidays (OCA) -> Public
+   Holiday Regions*.
+
+Installing the module links every work location to a region: the region
+named after the state of its address where ``calendar_public_holiday``
+created one from the former related states, otherwise one region per
+distinct work address.
 
 Usage
 =====
@@ -70,15 +92,17 @@ For using public holidays on leaves:
 4. If no leave type is yet specified, then default configuration is to
    exclude public holidays.
 5. The number of days will be computed excluding public holidays that
-   match the selected employee, including global, country and state
-   holidays.
+   match the selected employee, including global, country and regional
+   holidays -- the latter through the public holiday region of the
+   employee's work location.
 6. If no employee is yet selected, only global holidays will be taken
    into account.
 
-In calendar views in HR holiday app public will be display (likes other
-unusual days) according the current user employee country/state. If not
-set the there is a fallback to the current company country/state to
-filter public holidays.
+In calendar views of the Time Off app, public holidays are displayed
+(like other unusual days) according to the country of the work address
+of the current user's employee and the public holiday region of their
+work location. Without a work address there is a fallback to the current
+company's country to filter public holidays.
 
 Known issues / Roadmap
 ======================
@@ -102,6 +126,18 @@ Regional public holidays are shown in the public calendar. The regions
 will be noted in the description of the event, but it'll be shown to all
 users. It'd be good to have it show only for users in these regions.
 
+Changelog
+=========
+
+19.0.2.0.0
+----------
+
+-  Public holidays follow the public holiday region of the employee,
+   derived from their work location, instead of the state of their work
+   address. Upgrading links every work location to the region created
+   from its state by ``calendar_public_holiday``, or gives it a region
+   of its own.
+
 Bug Tracker
 ===========
 
@@ -122,43 +158,45 @@ Authors
 * Tecnativa
 * Fekete Mihai (Forest and Biomass Services Romania)
 * Druidoo
-* 
+* glueckkanja AG
 
 Contributors
 ------------
 
-- Michael Telahun Makonnen <mmakonnen@gmail.com>
-- Fekete Mihai <feketemihai@gmail.com>
-- Nikolina Todorova <nikolina.todorova@initos.com>
-- Alexis de Lattre <alexis.delattre@akretion.com>
-- Salton Massally (iDT Labs) <smassally@idtlabs.sl>
-- Ivan Yelizariev <yelizariev@it-projects.info>
-- Bassirou Ndaw <b.ndaw@ergobit.org>
-- Dhara Solanki <dhara.solanki@initos.com>
-- `Tecnativa <https://www.tecnativa.com>`__:
+-  Michael Telahun Makonnen <mmakonnen@gmail.com>
+-  Fekete Mihai <feketemihai@gmail.com>
+-  Nikolina Todorova <nikolina.todorova@initos.com>
+-  Alexis de Lattre <alexis.delattre@akretion.com>
+-  Salton Massally (iDT Labs) <smassally@idtlabs.sl>
+-  Ivan Yelizariev <yelizariev@it-projects.info>
+-  Bassirou Ndaw <b.ndaw@ergobit.org>
+-  Dhara Solanki <dhara.solanki@initos.com>
+-  `Tecnativa <https://www.tecnativa.com>`__:
 
-  - Pedro M. Baeza
+   -  Pedro M. Baeza
 
-- `CorporateHub <https://corporatehub.eu/>`__
+-  `CorporateHub <https://corporatehub.eu/>`__
 
-  - Alexey Pelykh <alexey.pelykh@corphub.eu>
+   -  Alexey Pelykh <alexey.pelykh@corphub.eu>
 
-- `Camptocamp <https://www.camptocamp.com>`__:
+-  `Camptocamp <https://www.camptocamp.com>`__:
 
-  - Damien Crier <damien.crier@camptocamp.com>
+   -  Damien Crier <damien.crier@camptocamp.com>
 
-- `Druidoo <https://www.druidoo.io>`__:
+-  `Druidoo <https://www.druidoo.io>`__:
 
-  - Iván Todorovich <ivan.todorovich@gmail.com>
+   -  Iván Todorovich <ivan.todorovich@gmail.com>
 
-- `Pesol <https://www.pesol.es>`__:
+-  `Pesol <https://www.pesol.es>`__:
 
-  - Pedro Evaristo Gonzalez Sanchez <pedro.gonzalez@pesol.es>
+   -  Pedro Evaristo Gonzalez Sanchez <pedro.gonzalez@pesol.es>
 
-- `Trobz <https://trobz.com>`__:
+-  `Trobz <https://trobz.com>`__:
 
-  - Thao Le <thaolt@trobz.com>
-  - Do Anh Duy <duyda@trobz.com>
+   -  Thao Le <thaolt@trobz.com>
+   -  Do Anh Duy <duyda@trobz.com>
+
+-  glueckkanja AG
 
 Other credits
 -------------

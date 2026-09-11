@@ -1,5 +1,6 @@
 # Copyright 2017-2021 Tecnativa - Pedro M. Baeza
 # Copyright 2018 Brainbean Apps
+# Copyright 2026 glueckkanja AG
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
@@ -45,6 +46,13 @@ class HrLeave(models.Model):
         return res
 
     def _get_domain_from_get_unusual_days(self, date_from, date_to=None):
+        """Domain of the public holiday lines applying to the employee.
+
+        The country comes from the work address of the employee, falling
+        back to the company; the region is the public holiday region of the
+        employee, derived from their work location. A nationwide line
+        always applies, a regional one only in the employee's region.
+        """
         domain = [("date", ">=", date_from)]
         # Use the employee of the user or the one who has the context
         employee_id = self.env.context.get("employee_id", False)
@@ -60,17 +68,17 @@ class HrLeave(models.Model):
             country_id = self.env.company.country_id.id or False
         if country_id:
             domain.append(("public_holiday_id.country_id", "in", (False, country_id)))
-        state_id = employee.address_id.state_id.id
-        if not state_id:
-            state_id = self.env.company.state_id.ids or False
-        if state_id:
+        region = employee.sudo().public_holiday_region_id
+        if region:
             domain.extend(
                 [
                     "|",
-                    ("state_ids", "in", state_id),
-                    ("state_ids", "=", False),
+                    ("region_ids", "in", region.ids),
+                    ("region_ids", "=", False),
                 ]
             )
+        else:
+            domain.append(("region_ids", "=", False))
         return domain
 
     @api.model
