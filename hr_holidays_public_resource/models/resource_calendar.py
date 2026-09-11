@@ -41,8 +41,8 @@ class ResourceCalendar(models.Model):
         ``hr_holidays_public`` takes public holidays out of the attendance
         intervals itself. Here every public holiday exists as global time
         off, which standard already leaves out of the working time, so the
-        second engine is switched off: applying both would let the OCA
-        *Exclude Public Holidays* flag override the standard *Ignore Public
-        Holidays* setting of the leave type.
+        second engine is switched off; both key on the standard *Ignore
+        Public Holidays* setting of the leave type, so nothing changes for
+        the user.
         """
         return False

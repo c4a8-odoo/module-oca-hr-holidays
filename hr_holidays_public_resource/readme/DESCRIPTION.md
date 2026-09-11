@@ -23,5 +23,5 @@ This module adds the HR side of that integration:
 `hr_holidays_public` on its own takes public holidays out of the working
 time through a private `_attendance_intervals_batch` override that no
 standard module is aware of. This module switches that engine off: the
-generated time off is what standard excludes, and the standard *Ignore
-Public Holidays* setting of the leave type decides.
+generated time off is what standard excludes, keyed on the same *Ignore
+Public Holidays* setting of the leave type.

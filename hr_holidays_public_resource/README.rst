@@ -60,8 +60,8 @@ behaviour on. This module adds the HR side of that integration:
 ``hr_holidays_public`` on its own takes public holidays out of the
 working time through a private ``_attendance_intervals_batch`` override
 that no standard module is aware of. This module switches that engine
-off: the generated time off is what standard excludes, and the standard
-*Ignore Public Holidays* setting of the leave type decides.
+off: the generated time off is what standard excludes, keyed on the same
+*Ignore Public Holidays* setting of the leave type.
 
 **Table of contents**
 
@@ -76,17 +76,12 @@ holiday regions of the employees, and on
 ``calendar_public_holiday_resource``, which generates the time off.
 Installing it installs both.
 
-The *Exclude Public Holidays* flag of ``hr_holidays_public`` has no
-effect once this module is installed: every public holiday exists as
-global time off, and the standard *Ignore Public Holidays* setting of
-the leave type decides whether a leave counts them.
-
 Configuration
 =============
 
 Whether a leave counts a public holiday is the standard *Ignore Public
-Holidays* setting on the leave type. The *Exclude Public Holidays* flag
-of ``hr_holidays_public`` is hidden: its engine is switched off here.
+Holidays* setting on the leave type, as with ``hr_holidays_public``
+alone.
 
 **Nationwide public holidays** are generated once per company, as a
 global time off without working hours that reaches every working

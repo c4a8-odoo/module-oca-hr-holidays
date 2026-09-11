@@ -1,6 +1,5 @@
 Whether a leave counts a public holiday is the standard *Ignore Public
-Holidays* setting on the leave type. The *Exclude Public Holidays* flag of
-`hr_holidays_public` is hidden: its engine is switched off here.
+Holidays* setting on the leave type, as with `hr_holidays_public` alone.
 
 **Nationwide public holidays** are generated once per company, as a global
 time off without working hours that reaches every working schedule of the

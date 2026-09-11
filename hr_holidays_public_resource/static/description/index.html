@@ -402,8 +402,8 @@ own.</li>
 <p><tt class="docutils literal">hr_holidays_public</tt> on its own takes public holidays out of the
 working time through a private <tt class="docutils literal">_attendance_intervals_batch</tt> override
 that no standard module is aware of. This module switches that engine
-off: the generated time off is what standard excludes, and the standard
-<em>Ignore Public Holidays</em> setting of the leave type decides.</p>
+off: the generated time off is what standard excludes, keyed on the same
+<em>Ignore Public Holidays</em> setting of the leave type.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -425,16 +425,12 @@ off: the generated time off is what standard excludes, and the standard
 holiday regions of the employees, and on
 <tt class="docutils literal">calendar_public_holiday_resource</tt>, which generates the time off.
 Installing it installs both.</p>
-<p>The <em>Exclude Public Holidays</em> flag of <tt class="docutils literal">hr_holidays_public</tt> has no
-effect once this module is installed: every public holiday exists as
-global time off, and the standard <em>Ignore Public Holidays</em> setting of
-the leave type decides whether a leave counts them.</p>
 </div>
 <div class="section" id="configuration">
 <h2><a class="toc-backref" href="#toc-entry-2">Configuration</a></h2>
 <p>Whether a leave counts a public holiday is the standard <em>Ignore Public
-Holidays</em> setting on the leave type. The <em>Exclude Public Holidays</em> flag
-of <tt class="docutils literal">hr_holidays_public</tt> is hidden: its engine is switched off here.</p>
+Holidays</em> setting on the leave type, as with <tt class="docutils literal">hr_holidays_public</tt>
+alone.</p>
 <p><strong>Nationwide public holidays</strong> are generated once per company, as a
 global time off without working hours that reaches every working
 schedule of the company, and they appear in the standard Public Holidays

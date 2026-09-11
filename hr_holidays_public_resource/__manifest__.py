@@ -17,7 +17,6 @@
     "data": [
         "views/resource_calendar_leaves_views.xml",
         "views/calendar_public_holiday_view.xml",
-        "views/hr_leave_type_views.xml",
         "views/resource_calendar_views.xml",
     ],
     "assets": {
