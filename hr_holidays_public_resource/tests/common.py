@@ -31,9 +31,9 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
         cls.env["res.company"].sudo().search([("id", "!=", cls.env.company.id)]).write(
             {"country_id": cls.env.ref("base.it").id}
         )
-        # Two regions standing for two regions, shared by every company.
-        cls.region_by = cls._create_region("Test Bayern")
-        cls.region_nw = cls._create_region("Test Nordrhein")
+        # Two regions of the fixture country, shared by every company.
+        cls.region_by = cls._create_region("Test Bayern", country=cls.country)
+        cls.region_nw = cls._create_region("Test Nordrhein", country=cls.country)
         # The current company is reused rather than a fresh one: several
         # timesheet modules add required columns to res.company that a bare
         # create() does not fill in.
@@ -128,10 +128,14 @@ class TestHolidaysPublicResourceCommon(TransactionCase):
         )
 
     @classmethod
-    def _create_region(cls, name, company=None):
+    def _create_region(cls, name, company=None, country=None):
         """A public holiday region, the label days are assigned by."""
         return cls.env["calendar.public.holiday.region"].create(
-            {"name": name, "company_id": company.id if company else False}
+            {
+                "name": name,
+                "company_id": company.id if company else False,
+                "country_id": country.id if country else False,
+            }
         )
 
     @classmethod

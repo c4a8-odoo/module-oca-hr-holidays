@@ -34,6 +34,22 @@ class TestRegions(TestHolidaysPublicResourceCommon):
             ]
         )
 
+    def test_a_region_of_another_country_is_left_out(self):
+        """The country of the region decides, not the one of the company."""
+        abroad = self._create_region("Abroad", country=self.env.ref("base.fr"))
+        employee_abroad = self._create_employee("Emp Abroad", self.calendar_by)
+        employee_abroad.work_location_id.public_holiday_region_id = abroad
+        line = self._create_line(
+            self._work_monday(),
+            name="Friedensfest",
+            regions=self.region_augsburg | abroad,
+        )
+        self.assertTrue(self._resource_mirror(line, self.employee_augsburg))
+        self.assertFalse(
+            self._resource_mirror(line, employee_abroad),
+            "a German calendar does not apply to a French region",
+        )
+
     def test_region_line_reaches_only_its_employees(self):
         line = self._create_line(
             self._work_monday(),

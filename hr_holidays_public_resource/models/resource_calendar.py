@@ -29,10 +29,19 @@ class ResourceCalendar(models.Model):
             regions = employees.public_holiday_region_id
             if not regions:
                 continue
-            scoped = line_model.search([("region_ids", "in", regions.ids)])
-            calendar.public_holiday_overview_line_ids |= (
-                calendar._filter_public_holiday_overview_lines(scoped)
+            weekdays = calendar._public_holiday_overview_weekdays()
+            # The country of the region decides, not the one of the
+            # schedule's company; the working days of the schedule still do.
+            scoped = line_model.search([("region_ids", "in", regions.ids)]).filtered(
+                lambda line, regions=regions, weekdays=weekdays: (
+                    weekdays is None or line.date.weekday() in weekdays
+                )
+                and any(
+                    region._matches_public_holiday_country(line)
+                    for region in regions & line.region_ids
+                )
             )
+            calendar.public_holiday_overview_line_ids |= scoped
         return res
 
     def _public_holidays_excluded_from_attendances(self):

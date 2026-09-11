@@ -18,24 +18,18 @@ gantt and produce their timesheet entry. Colleagues sharing one working
 schedule but working at different regions each get their own.
 
 A public holiday region (*calendar.public.holiday.region*, maintained
-under *Configuration > Public Holiday Regions*) is a plain label of where
-somebody works, without the address a standard work location demands -- a
-state, a plant, the Catholic municipalities of Bavaria. Every employee
-carries one, shown read-only on the Payroll tab below the working hours. It
-is derived from the work location of each version (contract): the mapping
-is maintained once, on the work location. A public holiday line names the
-regions it applies to; everybody assigned to one of them gets the day.
-The assignment is maintained on the public holiday line; while editing, an
-empty region cell reads *All Regions*. The *Create Next Year* copy
-carries the regions of each line over to the new year.
-
-Installing the module bootstraps the assignment from the existing work
-regions. A work location whose address lies in a state that
-`calendar_public_holiday` turned into a region (a database upgraded from
-state-scoped public holidays) is linked to that region, so the people
-working there keep the public holidays of their region; every other work
-region gets one region per distinct work address, linked back to it.
-Everybody follows through their work location automatically.
+under *Configuration > Public Holidays (OCA) > Public Holiday Regions*) is a
+plain label of where somebody works -- a state, a plant, the Catholic
+municipalities of Bavaria -- carrying the country whose public holiday
+calendars apply to it. Every employee carries one, derived by
+`hr_holidays_public` from the work location of each version (contract): the
+mapping is maintained once, on the work location, and `hr_holidays_public`
+bootstraps it on install (the region of the former state, or one region per
+work location). A public holiday line names the regions it applies to;
+everybody assigned to one of them gets the day, provided the calendar's
+country matches the region's. While editing, an empty region cell reads
+*All Regions*. The *Create Next Year* copy carries the regions of each line
+over to the new year.
 
 A line whose regions are all gone loses its scope and would fall back to
 applying to everybody. Disable the line instead of deleting it: it then

@@ -20,7 +20,7 @@ class TestStateRegionLinkSync(TestHolidaysPublicResourceCommon):
         cls.state_by = cls.env["res.country.state"].create(
             {"name": "Bootstrap Bayern", "code": "TBY", "country_id": cls.country.id}
         )
-        cls.state_region = cls._create_region("Bootstrap Bayern")
+        cls.state_region = cls._create_region("Bootstrap Bayern", country=cls.country)
 
     def _work_location_in(self, name, state):
         address = self.env["res.partner"].create(

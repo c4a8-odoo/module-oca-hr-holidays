@@ -57,9 +57,11 @@ class CalendarPublicHolidayLine(models.Model):
                 # this run and would collide with its existing mirror.
                 if not calendar or calendar not in calendars:
                     continue
-                if version.public_holiday_region_id not in line.region_ids:
+                region = version.public_holiday_region_id
+                if region not in line.region_ids:
                     continue
-                if not calendar._matches_public_holiday_country(line, company):
+                # The country of the region decides, not the company's.
+                if not region._matches_public_holiday_country(line):
                     continue
                 targets.append((line, employee.resource_id, calendar, company))
         return targets

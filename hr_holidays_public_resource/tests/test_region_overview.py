@@ -18,8 +18,12 @@ class TestRegionOverview(TestHolidaysPublicResourceCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.region = cls._create_region("Augsburg", company=cls.company)
-        cls.region_plain = cls._create_region("Elsewhere", company=cls.company)
+        cls.region = cls._create_region(
+            "Augsburg", company=cls.company, country=cls.country
+        )
+        cls.region_plain = cls._create_region(
+            "Elsewhere", company=cls.company, country=cls.country
+        )
         day = cls._work_monday()
         cls.line_national = cls._create_line(day, name="National")
         cls.line_direct = cls._create_line(
@@ -54,8 +58,8 @@ class TestRegionOverview(TestHolidaysPublicResourceCommon):
         )
         self.assertNotIn(foreign, self._overview(self.region))
 
-    def test_a_region_without_a_company_sees_everything(self):
-        """An unknown company country cannot rule a holiday calendar out."""
+    def test_a_region_without_a_country_sees_everything(self):
+        """An unknown country cannot rule a holiday calendar out."""
         shared = self._create_region("Shared")
         self.assertIn(self.line_national, self._overview(shared))
 
