@@ -13,7 +13,7 @@
         />
         <field
             name="region_ids"
-            eval="[Command.set([ref('hr_holidays_public.region_building_1')])]"
+            eval="[Command.set([ref('hr_holidays_public2.region_building_1')])]"
         />
     </record>
 </odoo>
