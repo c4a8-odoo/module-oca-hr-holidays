@@ -38,10 +38,18 @@ class HrVersion(models.Model):
         timesheets are rebuilt from the already-updated mirrors. Ending a
         contract removes the future entries beyond its end; extending it
         brings them back.
+
+        Standard ``hr.version.write`` propagates the contract dates by
+        writing the versions again under ``sync_contract_dates``, inside the
+        write that set them. That inner write is left alone: the outer one,
+        which sees the final state, rebuilds once; otherwise every contract
+        date change created, deleted and created the entries again.
         """
         employees = self.sudo().employee_id
         res = super().write(vals)
-        if TIMESHEET_TRIGGER_FIELDS.intersection(vals):
+        if TIMESHEET_TRIGGER_FIELDS.intersection(vals) and not self.env.context.get(
+            "sync_contract_dates"
+        ):
             (
                 employees | self.sudo().employee_id
             )._refresh_future_public_holiday_timesheets()
